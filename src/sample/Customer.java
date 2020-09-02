@@ -1,5 +1,8 @@
 package sample;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class Customer {
 
     private Integer customerId;
@@ -11,10 +14,11 @@ public class Customer {
     private String phoneNumber;
     private String addressLine1;
     private String addressLine2;
-    private String city;
-    private String postalCode;
+    private Integer cityId;
+    private Integer postalCode;
+    private StringProperty name = new SimpleStringProperty();
 
-    public Customer(Integer customerId, String customerName, Integer addressId, String createDate, String createdBy, String email, String phoneNumber, String addressLine1, String addressLine2, String city, String postalCode) {
+    public Customer(Integer customerId, String customerName, Integer addressId, String createDate, String createdBy, String email, String phoneNumber, String addressLine1, String addressLine2, Integer cityId, Integer postalCode) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.addressId = addressId;
@@ -24,8 +28,9 @@ public class Customer {
         this.phoneNumber = phoneNumber;
         this.addressLine1 = addressLine1;
         this.addressLine2 = addressLine2;
-        this.city = city;
+        this.cityId = cityId;
         this.postalCode = postalCode;
+        this.name.setValue(customerName);
     }
 
     public Integer getCustomerId() {
@@ -64,12 +69,16 @@ public class Customer {
         return addressLine2;
     }
 
-    public String getCity() {
-        return city;
+    public Integer getCityId() {
+        return cityId;
     }
 
-    public String getPostalCode() {
+    public Integer getPostalCode() {
         return postalCode;
+    }
+
+    public StringProperty nameProperty() {
+        return name ;
     }
 
 
