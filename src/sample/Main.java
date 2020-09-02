@@ -6,14 +6,24 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.sql.*;
+
 public class Main extends Application {
 
+    static Stage stage;
+
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();
+    public void start(Stage stage) throws Exception{
+        Parent root = FXMLLoader.load(getClass().getResource("Login.fxml"));
+
+        Scene scene = new Scene(root);
+        this.stage = stage;
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    static Stage getStage() {
+        return stage;
     }
 
 

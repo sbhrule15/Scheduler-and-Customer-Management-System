@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="699.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Calendar">
+   <children>
+      <TableView fx:id="weekTable" layoutX="70.0" layoutY="100.0" prefHeight="500.0" prefWidth="910.0">
+        <columns>
+          <TableColumn fx:id="sundayColumn" prefWidth="130" text="Sunday" />
+          <TableColumn fx:id="mondayColumn" prefWidth="130" text="Monday" />
+           <TableColumn fx:id="tuesdayColumn" prefWidth="130" text="Tuesday" />
+           <TableColumn fx:id="wednesdayColumn" prefWidth="130" text="Wednesday" />
+           <TableColumn fx:id="thursdayColumn" prefWidth="130" text="Thursday" />
+           <TableColumn fx:id="fridayColumn" prefWidth="130" text="Friday" />
+           <TableColumn fx:id="saturdayColumn" prefWidth="130" text="Saturday" />
+        </columns>
+      </TableView>
+      <DatePicker fx:id="datePicker" layoutX="786.0" layoutY="59.0" />
+      <Button fx:id="exitChange" layoutX="939.0" layoutY="622.0" mnemonicParsing="false" onAction="#handleExit" text="Exit" />
+      <RadioButton fx:id="weekView" layoutX="70.0" layoutY="63.0" mnemonicParsing="false" selected="true" text="Week">
+         <toggleGroup>
+            <ToggleGroup fx:id="calendarView" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="monthView" layoutX="150.0" layoutY="63.0" mnemonicParsing="false" text="Month" toggleGroup="$calendarView" />
+      <MenuBar prefHeight="29.0" prefWidth="1050.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Create Appointment" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="View">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Calendar" />
+                  <MenuItem mnemonicParsing="false" text="Customer" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <Button fx:id="customerView" layoutX="70.0" layoutY="622.0" mnemonicParsing="false" onAction="#handleCustomerSceneChange" text="Customers" />
+      <Button fx:id="addAppointment" layoutX="298.0" layoutY="59.0" mnemonicParsing="false" onAction="#handleAddAppointment" text="Add Appointment" />
+      <Button fx:id="editAppointment" layoutX="444.0" layoutY="59.0" mnemonicParsing="false" onAction="#handleEditAppointment" text="Edit Appointment" />
+      <Button fx:id="deleteAppointment" layoutX="591.0" layoutY="59.0" mnemonicParsing="false" onAction="#handleDeleteAppointment" text="Delete Appointment" />
+   </children>
+</AnchorPane>

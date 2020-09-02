@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="363.0" prefWidth="584.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CustomerController">
+   <children>
+      <TextField fx:id="name" layoutX="191.0" layoutY="64.0" prefHeight="27.0" prefWidth="336.0" />
+      <Label layoutX="191.0" layoutY="47.0" text="Name" />
+      <TextField fx:id="emailAddress" layoutX="66.0" layoutY="115.0" prefHeight="27.0" prefWidth="282.0" />
+      <Label layoutX="66.0" layoutY="98.0" text="Email" />
+      <TextField fx:id="addressLine1" layoutX="66.0" layoutY="169.0" prefHeight="27.0" prefWidth="461.0" />
+      <Label layoutX="66.0" layoutY="152.0" text="Address Line 1" />
+      <TextField fx:id="addressLine2" layoutX="66.0" layoutY="223.0" prefHeight="27.0" prefWidth="461.0" />
+      <Label layoutX="66.0" layoutY="206.0" text="Address Line 2" />
+      <ChoiceBox fx:id="citySelect" layoutX="66.0" layoutY="275.0" prefHeight="27.0" prefWidth="216.0" />
+      <Label layoutX="66.0" layoutY="258.0" text="City" />
+      <TextField fx:id="phoneNumber" layoutX="370.0" layoutY="115.0" prefHeight="27.0" prefWidth="158.0" />
+      <TextField fx:id="postalCode" layoutX="312.0" layoutY="275.0" prefHeight="27.0" prefWidth="216.0" />
+      <Label layoutX="370.0" layoutY="98.0" text="Phone Number" />
+      <Label layoutX="313.0" layoutY="258.0" text="Postal Code" />
+      <TextField fx:id="customerID" layoutX="66.0" layoutY="64.0" prefHeight="27.0" prefWidth="100.0" />
+      <Label layoutX="66.0" layoutY="47.0" text="Customer ID" />
+      <Button fx:id="submitButton" layoutX="466.0" layoutY="316.0" mnemonicParsing="false" onAction="#handleSubmitNew" text="Submit" />
+      <Button fx:id="exitButton" layoutX="412.0" layoutY="316.0" mnemonicParsing="false" onAction="#handleBack" text="Back" />
+      <Label fx:id="alertMessage" layoutX="66.0" layoutY="321.0" />
+   </children>
+</AnchorPane>
