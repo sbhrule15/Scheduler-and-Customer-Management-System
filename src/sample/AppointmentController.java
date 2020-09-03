@@ -15,6 +15,14 @@ import java.util.ResourceBundle;
 
 public class AppointmentController implements Initializable {
 
+    //Current User
+    private User currentUser;
+
+    // Passing of UserObject
+    void initUser(User user) {
+        currentUser = user;
+    }
+
     // LINKED NODES
     @FXML
     private DatePicker dateSelect;
@@ -72,16 +80,54 @@ public class AppointmentController implements Initializable {
     private void handleSceneChange(String destination) {
         Parent main = null;
         try {
-            main = FXMLLoader.load(getClass().getResource(destination));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(destination));
+            main = loader.load();
             Scene scene = new Scene(main);
 
             Stage stage = Main.getStage();
             stage.setScene(scene);
+
+            // Pass User Object to appropriate Controller
+            if (destination == "CustomerView.fxml"){
+                cusViewControllerLoad(loader);
+            } else if (destination == "Customer.fxml"){
+                cusControllerLoad(loader);
+            } else if (destination == "Appointment.fxml"){
+                appControllerLoad(loader);
+            } else if (destination == "Calendar.fxml") {
+                calControllerLoad(loader);
+            }
+
+            // Show scene
             stage.show();
+
         } catch (IOException exc) {
             exc.printStackTrace();
         }
     }
+
+    // Controller User Passthrough Methods
+
+    private void cusViewControllerLoad(FXMLLoader loader){
+        CustomerViewController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
+    private void cusControllerLoad(FXMLLoader loader){
+        CustomerController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
+    private void appControllerLoad(FXMLLoader loader){
+        AppointmentController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
+    private void calControllerLoad(FXMLLoader loader){
+        CalendarController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

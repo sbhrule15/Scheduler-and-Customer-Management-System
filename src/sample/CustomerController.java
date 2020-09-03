@@ -24,6 +24,14 @@ import java.util.ResourceBundle;
 
 public class CustomerController implements Initializable {
 
+    //Current User
+    private User currentUser;
+
+    // Passing of UserObject
+    void initUser(User user) {
+        currentUser = user;
+    }
+
     @FXML
     private TextField customerID;
     @FXML
@@ -67,6 +75,9 @@ public class CustomerController implements Initializable {
         String custphone = phoneNumber.getText();
         Integer custpostcode = Integer.parseInt(postalCode.getText());
         Integer custcity = 0;
+        String createdByUsername = currentUser.getUserName();
+        String lastUpdateBy = currentUser.getUserName();
+
 
         if (citychoice == "New York"){
             custcity = 1;
@@ -96,8 +107,8 @@ public class CustomerController implements Initializable {
             addressstmt.setInt(4, custpostcode);
             addressstmt.setString(5, custphone);
             addressstmt.setObject(6, currentdatetime);
-            addressstmt.setString(7, "test");
-            addressstmt.setObject(8, "test");
+            addressstmt.setString(7, createdByUsername);
+            addressstmt.setObject(8, lastUpdateBy);
 
             // Execute address insert and grab generated key
             addressstmt.execute();
@@ -139,15 +150,52 @@ public class CustomerController implements Initializable {
     private void handleSceneChange(String destination) {
         Parent main = null;
         try {
-            main = FXMLLoader.load(getClass().getResource(destination));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(destination));
+            main = loader.load();
             Scene scene = new Scene(main);
 
             Stage stage = Main.getStage();
             stage.setScene(scene);
+
+            // Pass User Object to appropriate Controller
+            if (destination == "CustomerView.fxml"){
+                cusViewControllerLoad(loader);
+            } else if (destination == "Customer.fxml"){
+                cusControllerLoad(loader);
+            } else if (destination == "Appointment.fxml"){
+                appControllerLoad(loader);
+            } else if (destination == "Calendar.fxml") {
+                calControllerLoad(loader);
+            }
+
+            // Show scene
             stage.show();
+
         } catch (IOException exc) {
             exc.printStackTrace();
         }
+    }
+
+    // Controller User Passthrough Methods
+
+    private void cusViewControllerLoad(FXMLLoader loader){
+        CustomerViewController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
+    private void cusControllerLoad(FXMLLoader loader){
+        CustomerController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
+    private void appControllerLoad(FXMLLoader loader){
+        AppointmentController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
+    private void calControllerLoad(FXMLLoader loader){
+        CalendarController controller = loader.getController();
+        controller.initUser(currentUser);
     }
 
 

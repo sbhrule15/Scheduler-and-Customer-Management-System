@@ -13,7 +13,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Calendar implements Initializable {
+public class CalendarController implements Initializable {
+
+    //Current User
+    private User currentUser;
+
+    // Passing of UserObject
+    void initUser(User user) {
+        currentUser = user;
+    }
 
     // LINKED NODES
     @FXML
@@ -55,7 +63,9 @@ public class Calendar implements Initializable {
 
     @FXML
     void handleAddAppointment(ActionEvent event) {
-        handleChangeScene("Appointment.fxml");
+        System.out.println(currentUser.getUserName());
+        handleSceneChange("Appointment.fxml");
+
     }
 
     @FXML
@@ -64,7 +74,7 @@ public class Calendar implements Initializable {
         // query data from database
         // pass data to Customer View
         // change to Appointment View Scene
-        handleChangeScene("Appointment.fxml");
+        handleSceneChange("Appointment.fxml");
     }
 
     @FXML
@@ -76,15 +86,10 @@ public class Calendar implements Initializable {
     }
 
 
-
     @FXML
     void handleCustomerSceneChange(ActionEvent event) {
-        handleChangeScene("CustomerView.fxml");
+        handleSceneChange("CustomerView.fxml");
     }
-
-
-
-
 
 
     @FXML
@@ -94,15 +99,30 @@ public class Calendar implements Initializable {
     }
 
     @FXML
-    private void handleChangeScene(String destination) {
+    private void handleSceneChange(String destination) {
         Parent main = null;
         try {
-            main = FXMLLoader.load(getClass().getResource(destination));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(destination));
+            main = loader.load();
             Scene scene = new Scene(main);
 
             Stage stage = Main.getStage();
             stage.setScene(scene);
+
+            // Pass User Object to appropriate Controller
+            if (destination == "CustomerView.fxml"){
+                cusViewControllerLoad(loader);
+            } else if (destination == "Customer.fxml"){
+                cusControllerLoad(loader);
+            } else if (destination == "Appointment.fxml"){
+                appControllerLoad(loader);
+            } else if (destination == "Calendar.fxml") {
+                calControllerLoad(loader);
+            }
+
+            // Show scene
             stage.show();
+
         } catch (IOException exc) {
             exc.printStackTrace();
         }
@@ -110,6 +130,28 @@ public class Calendar implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
     }
+
+    // Controller User Passthrough Methods
+
+    private void cusViewControllerLoad(FXMLLoader loader){
+        CustomerViewController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
+    private void cusControllerLoad(FXMLLoader loader){
+        CustomerController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
+    private void appControllerLoad(FXMLLoader loader){
+        AppointmentController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
+    private void calControllerLoad(FXMLLoader loader){
+        CalendarController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
 }

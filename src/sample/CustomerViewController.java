@@ -3,6 +3,8 @@ package sample;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,7 +28,13 @@ import java.util.ResourceBundle;
 
 public class CustomerViewController implements Initializable {
 
-    private Customer model;
+    //Current User
+    private User currentUser;
+
+    // Passing of UserObject
+    void initUser(User user) {
+        currentUser = user;
+    }
 
     // LINKED NODES
     @FXML
@@ -46,7 +54,8 @@ public class CustomerViewController implements Initializable {
     @FXML
     private TableColumn<Customer, String> name;
 
-
+    private List<Customer> custViewList = new ArrayList<Customer>();
+    private ObservableList<Customer> observableCustView = FXCollections.observableArrayList();
 
     // METHODS
     @FXML
@@ -60,8 +69,36 @@ public class CustomerViewController implements Initializable {
     @FXML
     void handleDeleteCustomer(ActionEvent event) {
         // grab customerID from selected customer
-        // delete query using customerID
-        // display success message if success, otherwise display error
+        Customer c = customerList.getSelectionModel().getSelectedItem();
+        Integer cid = c.getCustomerId();
+
+        // connect to database
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+            PreparedStatement delappstmt = connection.prepareStatement("DELETE FROM appointment WHERE customerId = ?");
+            PreparedStatement delcusstmt = connection.prepareStatement("DELETE customer, address FROM customer INNER JOIN address WHERE customer.customerId = ? AND customer.addressId = address.addressId");
+
+            delappstmt.setInt(1, cid);
+            delcusstmt.setInt(1, cid);
+
+            // delete query using customerID
+            delappstmt.execute();
+            delcusstmt.execute();
+
+            // close out
+            delappstmt.close();
+            delcusstmt.close();
+            connection.close();
+
+
+        } catch (SQLException e){
+            System.out.println("There was an error connecting to the database: " + e.getMessage());
+        }
+
+        // Delete from list
+         observableCustView.remove(c);
+
+         // DON'T FORGET TO DISPLAY SUCCESS OR ERROR MESSAGE
     }
     @FXML
     void handleAddCustomer(ActionEvent event) {
@@ -85,26 +122,57 @@ public class CustomerViewController implements Initializable {
     private void handleSceneChange(String destination) {
         Parent main = null;
         try {
-            main = FXMLLoader.load(getClass().getResource(destination));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(destination));
+            main = loader.load();
             Scene scene = new Scene(main);
 
             Stage stage = Main.getStage();
             stage.setScene(scene);
+
+            // Pass User Object to appropriate Controller
+            if (destination == "CustomerView.fxml"){
+                cusViewControllerLoad(loader);
+            } else if (destination == "Customer.fxml"){
+                cusControllerLoad(loader);
+            } else if (destination == "Appointment.fxml"){
+                appControllerLoad(loader);
+            } else if (destination == "Calendar.fxml") {
+                calControllerLoad(loader);
+            }
+
+            // Show scene
             stage.show();
+
         } catch (IOException exc) {
             exc.printStackTrace();
         }
     }
 
+    // Controller User Passthrough Methods
 
+    private void cusViewControllerLoad(FXMLLoader loader){
+        CustomerViewController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
 
+    private void cusControllerLoad(FXMLLoader loader){
+        CustomerController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
 
+    private void appControllerLoad(FXMLLoader loader){
+        AppointmentController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
+
+    private void calControllerLoad(FXMLLoader loader){
+        CalendarController controller = loader.getController();
+        controller.initUser(currentUser);
+    }
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        List<Customer> custViewList = new ArrayList<Customer>();
 
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
@@ -157,14 +225,46 @@ public class CustomerViewController implements Initializable {
         } catch (SQLException e) {
             System.out.println("There was an error connecting to the database: " + e.getMessage());
         }
-        ObservableList<Customer> observableCustView = FXCollections.observableArrayList(custViewList);
 
+        observableCustView = FXCollections.observableArrayList(custViewList);
         customerList.setItems(observableCustView);
 
         // lambda function to clean up set function
         name.setCellValueFactory((p ->
                 p.getValue().nameProperty()
         ));
+
+        filterList();
+
+    }
+
+    void filterList() {
+        // Wrap in Filtered List, lambda function to display all of the elements
+        FilteredList<Customer> filteredCustomers = new FilteredList<>(observableCustView, p -> true);
+
+        // Set Predicate
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredCustomers.setPredicate(customer -> {
+                if (newValue == null || newValue.isEmpty()){
+                    return true;
+                }
+
+                String searched = newValue.toLowerCase();
+
+                if (customer.getCustomerName().toLowerCase().contains(searched)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+
+        // Wrap and bind in SortedList
+        SortedList<Customer> sortedCustomers = new SortedList<>(filteredCustomers);
+        sortedCustomers.comparatorProperty().bind(customerList.comparatorProperty());
+
+        // Add the sorted items to table
+        customerList.setItems(sortedCustomers);
+
     }
 
 }
