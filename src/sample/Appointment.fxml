@@ -3,16 +3,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="395.0" prefWidth="866.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.AppointmentController">
+<AnchorPane prefHeight="500.0" prefWidth="866.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.AppointmentController">
    <children>
-      <TableView fx:id="customerList" layoutX="455.0" layoutY="99.0" prefHeight="212.0" prefWidth="348.0">
+      <TableView fx:id="customerList" layoutX="455.0" layoutY="99.0" prefHeight="331.0" prefWidth="348.0">
          <columns>
-            <TableColumn fx:id="customerLastName" prefWidth="174" text="Last" />
-            <TableColumn fx:id="customerFirstName" prefWidth="174" text="First" />
+            <TableColumn fx:id="name" prefWidth="348.0" text="Name" />
          </columns>
       </TableView>
       <Label layoutX="69.0" layoutY="57.0" />
-      <DatePicker fx:id="dateSelect" layoutX="61.0" layoutY="61.0" prefHeight="27.0" prefWidth="160.0" />
+      <DatePicker fx:id="datePicker" layoutX="61.0" layoutY="61.0" prefHeight="27.0" prefWidth="160.0" />
       <ChoiceBox fx:id="timeStartHour" layoutX="249.0" layoutY="61.0" prefHeight="27.0" prefWidth="52.0" />
       <ChoiceBox fx:id="timeStartMinute" layoutX="306.0" layoutY="61.0" prefHeight="27.0" prefWidth="61.0" />
       <ChoiceBox fx:id="timeStartAMPM" layoutX="375.0" layoutY="61.0" prefHeight="27.0" prefWidth="52.0" />
@@ -21,19 +20,21 @@
       <Label layoutX="241.0" layoutY="40.0" text=" Time Start" />
       <TextField fx:id="appointmentType" layoutX="61.0" layoutY="232.0" prefHeight="27.0" prefWidth="251.0" />
       <Label layoutX="62.0" layoutY="213.0" text="Appointment Type" />
-      <Button fx:id="createAppointment" layoutX="661.0" layoutY="340.0" mnemonicParsing="false" onAction="#handleCreateAppointment" text="Create Appointment" />
-      <Button fx:id="cancelChange" layoutX="588.0" layoutY="340.0" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
+      <Button fx:id="createAppointment" layoutX="661.0" layoutY="459.0" mnemonicParsing="false" onAction="#handleCreateAppointment" text="Create Appointment" />
+      <Button fx:id="cancelChange" layoutX="589.0" layoutY="459.0" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
       <TextField fx:id="location" layoutX="208.0" layoutY="123.0" prefHeight="27.0" prefWidth="221.0" />
       <TextField fx:id="contact" layoutX="61.0" layoutY="283.0" prefHeight="27.0" prefWidth="368.0" />
       <Label layoutX="208.0" layoutY="100.0" text="Location" />
       <Label layoutX="60.0" layoutY="266.0" text="Contact" />
       <Label layoutX="60.0" layoutY="100.0" text="Duration (minutes)" />
-      <TextField fx:id="customerSearch" layoutX="454.0" layoutY="61.0" prefHeight="27.0" prefWidth="348.0" />
+      <TextField fx:id="searchField" layoutX="454.0" layoutY="61.0" prefHeight="27.0" prefWidth="348.0" />
       <Label layoutX="575.0" layoutY="40.0" text="Customer Search" />
       <TextField fx:id="duration" layoutX="61.0" layoutY="123.0" prefHeight="27.0" prefWidth="115.0" />
       <TextField fx:id="title" layoutX="62.0" layoutY="178.0" prefHeight="27.0" prefWidth="368.0" />
       <Label layoutX="62.0" layoutY="161.0" text="Title" />
       <TextField fx:id="appointmentID" editable="false" layoutX="337.0" layoutY="232.0" prefHeight="27.0" prefWidth="92.0" />
       <Label layoutX="337.0" layoutY="213.0" text="ID" />
+      <TextArea fx:id="description" layoutX="62.0" layoutY="340.0" prefHeight="90.0" prefWidth="368.0" />
+      <Label layoutX="62.0" layoutY="323.0" text="Description" />
    </children>
 </AnchorPane>

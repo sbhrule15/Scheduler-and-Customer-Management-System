@@ -62,7 +62,7 @@ public class CustomerViewController implements Initializable {
 
         // Get selected customer
         Customer c = customerList.getSelectionModel().getSelectedItem();
-        if (c == null) {
+        if (1 == 0) {
             alertMessage.setText("Please select a customer to edit");
         } else {
             handleSceneChange("Customer.fxml",true, c);
@@ -228,7 +228,7 @@ public class CustomerViewController implements Initializable {
                     String custphone = results2.getString("phone");
 
                     // build customer object
-                    Customer c = new Customer(custid, custName, custaddiD, custcreated, custcreatedby, null, custphone, custadd, custadd2, custcityid, custpostal);
+                    Customer c = new Customer(custid, custName, custaddiD, custcreated, custcreatedby, custphone, custadd, custadd2, custcityid, custpostal);
 
                     // add to list of customers
                     custViewList.add(c);
@@ -257,7 +257,7 @@ public class CustomerViewController implements Initializable {
 
     }
 
-    void filterList() {
+    private void filterList() {
         // Wrap in Filtered List, lambda function to display all of the elements
         FilteredList<Customer> filteredCustomers = new FilteredList<>(observableCustView, p -> true);
 

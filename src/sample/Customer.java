@@ -10,7 +10,6 @@ public class Customer {
     private Integer addressId;
     private String createDate;
     private String createdBy;
-    private String email;
     private String phoneNumber;
     private String addressLine1;
     private String addressLine2;
@@ -18,18 +17,23 @@ public class Customer {
     private Integer postalCode;
     private StringProperty name = new SimpleStringProperty();
 
-    public Customer(Integer customerId, String customerName, Integer addressId, String createDate, String createdBy, String email, String phoneNumber, String addressLine1, String addressLine2, Integer cityId, Integer postalCode) {
+    public Customer(Integer customerId, String customerName, Integer addressId, String createDate, String createdBy, String phoneNumber, String addressLine1, String addressLine2, Integer cityId, Integer postalCode) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.addressId = addressId;
         this.createDate = createDate;
         this.createdBy = createdBy;
-        this.email = email;
         this.phoneNumber = phoneNumber;
         this.addressLine1 = addressLine1;
         this.addressLine2 = addressLine2;
         this.cityId = cityId;
         this.postalCode = postalCode;
+        this.name.setValue(customerName);
+    }
+
+    public Customer(Integer customerId, String customerName) {
+        this.customerId = customerId;
+        this.customerName = customerName;
         this.name.setValue(customerName);
     }
 
@@ -51,10 +55,6 @@ public class Customer {
 
     public String getCreatedBy() {
         return createdBy;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public String getPhoneNumber() {

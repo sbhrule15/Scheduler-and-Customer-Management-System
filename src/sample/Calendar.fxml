@@ -5,18 +5,17 @@
 
 <AnchorPane prefHeight="699.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CalendarController">
    <children>
-      <TableView fx:id="weekTable" layoutX="70.0" layoutY="100.0" prefHeight="500.0" prefWidth="910.0">
+      <TableView fx:id="sundayTable" layoutX="70.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
         <columns>
           <TableColumn fx:id="sundayColumn" prefWidth="130" text="Sunday" />
-          <TableColumn fx:id="mondayColumn" prefWidth="130" text="Monday" />
-           <TableColumn fx:id="tuesdayColumn" prefWidth="130" text="Tuesday" />
-           <TableColumn fx:id="wednesdayColumn" prefWidth="130" text="Wednesday" />
-           <TableColumn fx:id="thursdayColumn" prefWidth="130" text="Thursday" />
-           <TableColumn fx:id="fridayColumn" prefWidth="130" text="Friday" />
-           <TableColumn fx:id="saturdayColumn" prefWidth="130" text="Saturday" />
         </columns>
       </TableView>
-      <DatePicker fx:id="datePicker" layoutX="786.0" layoutY="59.0" />
+       <TableView fx:id="mondayTable" layoutX="200.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+           <columns>
+               <TableColumn fx:id="mondayColumn" prefWidth="130" text="Monday" />
+           </columns>
+       </TableView>
+      <DatePicker fx:id="datePicker" layoutX="799.0" layoutY="59.0" onAction="#getWeekDates" prefHeight="27.0" prefWidth="181.0" />
       <Button fx:id="exitChange" layoutX="939.0" layoutY="622.0" mnemonicParsing="false" onAction="#handleExit" text="Exit" />
       <RadioButton fx:id="weekView" layoutX="70.0" layoutY="63.0" mnemonicParsing="false" selected="true" text="Week">
          <toggleGroup>
@@ -47,5 +46,30 @@
       <Button fx:id="addAppointment" layoutX="298.0" layoutY="59.0" mnemonicParsing="false" onAction="#handleAddAppointment" text="Add Appointment" />
       <Button fx:id="editAppointment" layoutX="444.0" layoutY="59.0" mnemonicParsing="false" onAction="#handleEditAppointment" text="Edit Appointment" />
       <Button fx:id="deleteAppointment" layoutX="591.0" layoutY="59.0" mnemonicParsing="false" onAction="#handleDeleteAppointment" text="Delete Appointment" />
+      <TableView fx:id="tuesdayTable" layoutX="330.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="tuesdayColumn" prefWidth="130" text="Tuesday" />
+         </columns>
+      </TableView>
+      <TableView fx:id="wednesdayTable" layoutX="460.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="wednesdayColumn" prefWidth="130" text="Wednesday" />
+         </columns>
+      </TableView>
+      <TableView fx:id="thursdayTable" layoutX="590.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="thursdayColumn" prefWidth="130" text="Thursday" />
+         </columns>
+      </TableView>
+      <TableView fx:id="fridayTable" layoutX="720.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="fridayColumn" prefWidth="130" text="Friday" />
+         </columns>
+      </TableView>
+      <TableView fx:id="saturdayTable" layoutX="850.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="saturdayColumn" prefWidth="130" text="Saturday" />
+         </columns>
+      </TableView>
    </children>
 </AnchorPane>
