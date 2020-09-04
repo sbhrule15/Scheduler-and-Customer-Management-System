@@ -27,11 +27,19 @@ public class CustomerController implements Initializable {
     //Current User
     private User currentUser;
 
+    // Editing or not
+    private Boolean edit = false;
+
     // Passing of UserObject
     void initUser(User user) {
         currentUser = user;
     }
 
+    // Address Id
+    private Integer addressId;
+
+    @FXML
+    private Label headerLabel;
     @FXML
     private TextField customerID;
     @FXML
@@ -58,11 +66,11 @@ public class CustomerController implements Initializable {
 
     @FXML
     void handleBack(ActionEvent event){
-        handleSceneChange("Calendar.fxml");
+        handleSceneChange("CustomerView.fxml");
     }
 
     @FXML
-    void handleSubmitNew(ActionEvent event) {
+    void handleSubmit(ActionEvent event) {
 
         LocalDateTime currentdatetime = LocalDateTime.now();
 
@@ -95,55 +103,102 @@ public class CustomerController implements Initializable {
             custcity = 5;
         }
 
-        try {
-            // Initialize connection
-            Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+        if (edit){
 
-            // Prepare insert address statement
-            PreparedStatement addressstmt = connection.prepareStatement("INSERT INTO address (address, address2, cityId, postalCode, phone, createDate, createdBy, lastUpdateBy) VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-            addressstmt.setString(1, custadd1);
-            addressstmt.setString(2, custadd2);
-            addressstmt.setInt(3, custcity);
-            addressstmt.setInt(4, custpostcode);
-            addressstmt.setString(5, custphone);
-            addressstmt.setObject(6, currentdatetime);
-            addressstmt.setString(7, createdByUsername);
-            addressstmt.setObject(8, lastUpdateBy);
+            try {
+                // Initialize connection
+                Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
 
-            // Execute address insert and grab generated key
-            addressstmt.execute();
+                // Get customer ID
+                Integer custId = Integer.valueOf(customerID.getText());
 
-            // Get address id
-            ResultSet rs = addressstmt.getGeneratedKeys();
-            if(rs.next()) {
+                // Prepare edit address statement
+                PreparedStatement addressstmt = connection.prepareStatement("UPDATE address SET address = ?, address2 = ?, cityId = ?, postalCode = ?, phone = ?, lastUpdateBy = ? WHERE addressId = ?", Statement.RETURN_GENERATED_KEYS);
+                addressstmt.setString(1, custadd1);
+                addressstmt.setString(2, custadd2);
+                addressstmt.setInt(3, custcity);
+                addressstmt.setInt(4, custpostcode);
+                addressstmt.setString(5, custphone);
+                addressstmt.setObject(6, lastUpdateBy);
+                addressstmt.setInt(7, addressId);
 
-                Integer addresskey = rs.getInt(1);
-                System.out.println("Key Generated: " + addresskey);
-
-
-                // Prepare insert customer statement
-                PreparedStatement custstmt = connection.prepareStatement("INSERT INTO customer (customerName, addressId, active, createDate, createdBy, lastUpdateBy) VALUES (?,?,?,?,?,?)");
+                // Prepare edit customer statement
+                PreparedStatement custstmt = connection.prepareStatement("UPDATE customer SET customerName = ?, lastUpdate = ?, lastUpdateBy = ? WHERE customerId = ?");
                 custstmt.setString(1, custname);
-                custstmt.setInt(2, addresskey);
-                custstmt.setInt(3, custcity);
-                custstmt.setObject(4, currentdatetime);
-                custstmt.setString(5, "test");
-                custstmt.setObject(6, "test");
+                custstmt.setObject(2, currentdatetime);
+                custstmt.setObject(3, lastUpdateBy);
+                custstmt.setInt(4, custId);
 
+                // Execute updates
+                addressstmt.execute();
+                custstmt.execute();
 
-                try {
-                    custstmt.execute();
-                } catch (SQLException e) {
-                    alertMessage.setText("There was an error: " + e);
-                }
-
+                // Close statements and connection
+                addressstmt.close();
                 custstmt.close();
                 connection.close();
+
+
+            } catch(SQLException e) {
+                System.out.println("There was an error: " + e.getMessage());
             }
 
-        } catch(SQLException e) {
-            System.out.println("There was an error: " + e.getMessage());
+            handleSceneChange("CustomerView.fxml");
+
+        } else {
+
+            try {
+                // Initialize connection
+                Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+
+                // Prepare insert or edit address statement
+                PreparedStatement addressstmt = connection.prepareStatement("INSERT INTO address (address, address2, cityId, postalCode, phone, createDate, createdBy, lastUpdateBy) VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+                addressstmt.setString(1, custadd1);
+                addressstmt.setString(2, custadd2);
+                addressstmt.setInt(3, custcity);
+                addressstmt.setInt(4, custpostcode);
+                addressstmt.setString(5, custphone);
+                addressstmt.setObject(6, currentdatetime);
+                addressstmt.setString(7, createdByUsername);
+                addressstmt.setObject(8, lastUpdateBy);
+
+                // Execute address insert and grab generated key
+                addressstmt.execute();
+
+                // Get address id
+                ResultSet rs = addressstmt.getGeneratedKeys();
+                if(rs.next()) {
+
+                    Integer addresskey = rs.getInt(1);
+                    System.out.println("Key Generated: " + addresskey);
+
+
+                    // Prepare insert customer statement
+                    PreparedStatement custstmt = connection.prepareStatement("INSERT INTO customer (customerName, addressId, active, createDate, createdBy, lastUpdateBy) VALUES (?,?,?,?,?,?)");
+                    custstmt.setString(1, custname);
+                    custstmt.setInt(2, addresskey);
+                    custstmt.setInt(3, custcity);
+                    custstmt.setObject(4, currentdatetime);
+                    custstmt.setString(5, "test");
+                    custstmt.setObject(6, "test");
+
+
+                    try {
+                        custstmt.execute();
+                    } catch (SQLException e) {
+                        alertMessage.setText("There was an error: " + e);
+                    }
+
+                    custstmt.close();
+                    connection.close();
+                }
+
+            } catch(SQLException e) {
+                System.out.println("There was an error: " + e.getMessage());
+            }
         }
+
+
     }
 
     @FXML
@@ -196,6 +251,47 @@ public class CustomerController implements Initializable {
     private void calControllerLoad(FXMLLoader loader){
         CalendarController controller = loader.getController();
         controller.initUser(currentUser);
+    }
+
+    // Loading edit data
+
+    public void loadCustomerInfo(Customer customer) {
+        customerID.setText(String.valueOf(customer.getCustomerId()));
+        name.setText(customer.getCustomerName());
+        phoneNumber.setText(customer.getPhoneNumber());
+        addressLine1.setText(customer.getAddressLine1());
+        addressLine2.setText(customer.getAddressLine2());
+        postalCode.setText(String.valueOf(customer.getPostalCode()));
+
+        // Get City and update
+
+        Integer cityId = customer.getCityId();
+
+        if (cityId == 1){
+            citySelect.setValue("New York");
+        }
+        else if (cityId == 2){
+            citySelect.setValue("Los Angeles");
+        }
+        else if (cityId == 3){
+            citySelect.setValue("Toronto");
+        }
+        else if (cityId == 4){
+            citySelect.setValue("Vancouver");
+        }
+        else if (cityId == 5){
+            citySelect.setValue("Oslo");
+        }
+
+        // Set Header Label
+        headerLabel.setText("Edit Customer");
+
+        // Set to edit
+        edit = true;
+
+        // Load address ID
+        addressId = customer.getAddressId();
+
     }
 
 

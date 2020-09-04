@@ -37,5 +37,6 @@
                </Menu>
            </menus>
        </MenuBar>
+      <Label fx:id="alertMessage" layoutX="204.0" layoutY="295.0" />
    </children>
 </AnchorPane>

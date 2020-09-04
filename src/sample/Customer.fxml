@@ -21,8 +21,9 @@
       <Label layoutX="313.0" layoutY="258.0" text="Postal Code" />
       <TextField fx:id="customerID" layoutX="66.0" layoutY="64.0" prefHeight="27.0" prefWidth="100.0" />
       <Label layoutX="66.0" layoutY="47.0" text="Customer ID" />
-      <Button fx:id="submitButton" layoutX="466.0" layoutY="316.0" mnemonicParsing="false" onAction="#handleSubmitNew" text="Submit" />
+      <Button fx:id="submitButton" layoutX="466.0" layoutY="316.0" mnemonicParsing="false" onAction="#handleSubmit" text="Submit" />
       <Button fx:id="exitButton" layoutX="412.0" layoutY="316.0" mnemonicParsing="false" onAction="#handleBack" text="Back" />
       <Label fx:id="alertMessage" layoutX="66.0" layoutY="321.0" />
+      <Label fx:id="headerLabel" layoutX="248.0" layoutY="22.0" text="Add Customer" />
    </children>
 </AnchorPane>

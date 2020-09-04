@@ -11,10 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -38,6 +35,8 @@ public class CustomerViewController implements Initializable {
 
     // LINKED NODES
     @FXML
+    private Label alertMessage;
+    @FXML
     private Button editCustomer;
     @FXML
     private Button deleteCustomer;
@@ -60,54 +59,66 @@ public class CustomerViewController implements Initializable {
     // METHODS
     @FXML
     void handleEditCustomer(ActionEvent event) {
-        // grab customerID from selected customer
-        // query customerID information in database
-        // create customer object from query
-        // pass customer object to scene change
-        handleSceneChange("Customer.fxml");
+
+        // Get selected customer
+        Customer c = customerList.getSelectionModel().getSelectedItem();
+        if (c == null) {
+            alertMessage.setText("Please select a customer to edit");
+        } else {
+            handleSceneChange("Customer.fxml",true, c);
+        }
     }
+
     @FXML
     void handleDeleteCustomer(ActionEvent event) {
+        Integer cid = 0;
+        Customer c = null;
         // grab customerID from selected customer
-        Customer c = customerList.getSelectionModel().getSelectedItem();
-        Integer cid = c.getCustomerId();
-
-        // connect to database
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
-            PreparedStatement delappstmt = connection.prepareStatement("DELETE FROM appointment WHERE customerId = ?");
-            PreparedStatement delcusstmt = connection.prepareStatement("DELETE customer, address FROM customer INNER JOIN address WHERE customer.customerId = ? AND customer.addressId = address.addressId");
-
-            delappstmt.setInt(1, cid);
-            delcusstmt.setInt(1, cid);
-
-            // delete query using customerID
-            delappstmt.execute();
-            delcusstmt.execute();
-
-            // close out
-            delappstmt.close();
-            delcusstmt.close();
-            connection.close();
-
-
-        } catch (SQLException e){
-            System.out.println("There was an error connecting to the database: " + e.getMessage());
+            c = customerList.getSelectionModel().getSelectedItem();
+            cid = c.getCustomerId();
+        } catch (NullPointerException e){
+            alertMessage.setText("Please select a customer to delete");
         }
 
-        // Delete from list
-         observableCustView.remove(c);
+        if (c != null) {
+            try {
+                Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+                PreparedStatement delappstmt = connection.prepareStatement("DELETE FROM appointment WHERE customerId = ?");
+                PreparedStatement delcusstmt = connection.prepareStatement("DELETE customer, address FROM customer INNER JOIN address WHERE customer.customerId = ? AND customer.addressId = address.addressId");
 
-         // DON'T FORGET TO DISPLAY SUCCESS OR ERROR MESSAGE
+                delappstmt.setInt(1, cid);
+                delcusstmt.setInt(1, cid);
+
+                // delete query using customerID
+                delappstmt.execute();
+                delcusstmt.execute();
+
+                // close out
+                delappstmt.close();
+                delcusstmt.close();
+                connection.close();
+
+                // Delete from list
+                observableCustView.remove(c);
+
+                // Display success message
+                alertMessage.setText("Customer successfully deleted.");
+
+            } catch (SQLException e){
+                System.out.println("There was an error connecting to the database: " + e.getMessage());
+            }
+
+        }
     }
     @FXML
     void handleAddCustomer(ActionEvent event) {
-        handleSceneChange("Customer.fxml");
+        handleSceneChange("Customer.fxml", false, null);
     }
 
     @FXML
     void handleCalendarChange(ActionEvent event){
-        handleSceneChange("Calendar.fxml");
+        handleSceneChange("Calendar.fxml", false, null);
     }
 
     @FXML
@@ -119,7 +130,7 @@ public class CustomerViewController implements Initializable {
     // SCENE CHANGE
 
     @FXML
-    private void handleSceneChange(String destination) {
+    private void handleSceneChange(String destination, Boolean edit, Customer customer) {
         Parent main = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(destination));
@@ -132,8 +143,10 @@ public class CustomerViewController implements Initializable {
             // Pass User Object to appropriate Controller
             if (destination == "CustomerView.fxml"){
                 cusViewControllerLoad(loader);
-            } else if (destination == "Customer.fxml"){
-                cusControllerLoad(loader);
+            } else if (destination == "Customer.fxml" && edit){
+                cusEditControllerLoad(loader, customer);
+            } else if (destination == "Customer.fxml" && !(edit)){
+                cusAddControllerLoad(loader);
             } else if (destination == "Appointment.fxml"){
                 appControllerLoad(loader);
             } else if (destination == "Calendar.fxml") {
@@ -155,9 +168,15 @@ public class CustomerViewController implements Initializable {
         controller.initUser(currentUser);
     }
 
-    private void cusControllerLoad(FXMLLoader loader){
+    private void cusAddControllerLoad(FXMLLoader loader){
         CustomerController controller = loader.getController();
         controller.initUser(currentUser);
+    }
+
+    private void cusEditControllerLoad(FXMLLoader loader, Customer customer){
+        CustomerController controller = loader.getController();
+        controller.initUser(currentUser);
+        controller.loadCustomerInfo(customer);
     }
 
     private void appControllerLoad(FXMLLoader loader){
