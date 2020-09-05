@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
@@ -167,6 +168,11 @@ public class AppointmentController implements Initializable {
     }
 
     @FXML
+    void handleDeleteAppointment(ActionEvent event){
+
+    }
+
+    @FXML
     void handleCancel(ActionEvent event) {
         handleSceneChange("Calendar.fxml");
     }
@@ -314,4 +320,5 @@ public class AppointmentController implements Initializable {
         customerList.setItems(sortedCustomers);
 
     }
+
 }

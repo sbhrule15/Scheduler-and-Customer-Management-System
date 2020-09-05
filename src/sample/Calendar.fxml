@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="699.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CalendarController">
+<AnchorPane prefHeight="699.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CalendarController">
    <children>
       <TableView fx:id="sundayTable" layoutX="70.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
         <columns>
@@ -71,5 +71,6 @@
             <TableColumn fx:id="saturdayColumn" prefWidth="130" text="Saturday" />
          </columns>
       </TableView>
+      <Label fx:id="errorMessage" layoutX="313.0" layoutY="627.0" />
    </children>
 </AnchorPane>

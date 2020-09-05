@@ -36,6 +36,8 @@ public class CalendarController implements Initializable {
 
     // LINKED NODES
     @FXML
+    private Label errorMessage;
+    @FXML
     private Button addAppointment;
     @FXML
     private Button editAppointment;
@@ -102,7 +104,8 @@ public class CalendarController implements Initializable {
 
     @FXML
     void handleEditAppointment(ActionEvent event) {
-        // grab data from selected appointment
+        // grab appointment from selected appointment
+
         // query data from database
         // pass data to Customer View
         // change to Appointment View Scene
@@ -112,13 +115,51 @@ public class CalendarController implements Initializable {
     @FXML
     void handleDeleteAppointment(ActionEvent event) {
         // grab appointmentID from selected appointment
-        // select from database with appointmentID
-        // delete appointment from database
-        // reload Table
+        Appointment a1 = (Appointment) sundayTable.getSelectionModel().getSelectedItem();
+        Appointment a2 = (Appointment) mondayTable.getSelectionModel().getSelectedItem();
+        Appointment a3 = (Appointment) tuesdayTable.getSelectionModel().getSelectedItem();
+        Appointment a4 = (Appointment) wednesdayTable.getSelectionModel().getSelectedItem();
+        Appointment a5 = (Appointment) thursdayTable.getSelectionModel().getSelectedItem();
+        Appointment a6 = (Appointment) fridayTable.getSelectionModel().getSelectedItem();
+        Appointment a7 = (Appointment) saturdayTable.getSelectionModel().getSelectedItem();
+
+        if (a1 != null){
+            deleteSelected(a1);
+            sundayList.remove(a1);
+        } else if (a2 != null){
+            deleteSelected(a2);
+            mondayList.remove(a2);
+        } else if (a3 != null){
+            deleteSelected(a3);
+            tuesdayList.remove(a3);
+        } else if (a4 != null){
+            deleteSelected(a4);
+            wednesdayList.remove(a4);
+        } else if (a5 != null){
+            deleteSelected(a5);
+            thursdayList.remove(a5);
+        } else if (a6 != null){
+            deleteSelected(a6);
+            fridayList.remove(a6);
+        } else if (a7 != null){
+            deleteSelected(a7);
+            saturdayList.remove(a7);
+        } else {
+            errorMessage.setText("No appointment selected: Please select and appointment");
+        }
     }
 
     @FXML
     void getWeekDates(ActionEvent event) {
+        // Clear out array lists
+        sundayList.clear();
+        mondayList.clear();
+        tuesdayList.clear();
+        wednesdayList.clear();
+        thursdayList.clear();
+        fridayList.clear();
+        saturdayList.clear();
+
         // Set array for dates
         ArrayList<Date> datesInWeek = new ArrayList<>();
 
@@ -310,4 +351,20 @@ public class CalendarController implements Initializable {
         controller.initUser(currentUser);
     }
 
+    private void deleteSelected(Appointment a){
+        Integer aid = a.getAppointmentId();
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM appointment WHERE appointmentId = ?");
+            ps.setInt(1, aid);
+
+            ps.execute();
+
+            ps.close();
+            connection.close();
+
+        } catch (SQLException e){
+            System.out.println("There was an error connecting to the database: " + e.getMessage());
+        }
+    }
 }
