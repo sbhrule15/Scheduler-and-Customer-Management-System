@@ -98,18 +98,38 @@ public class CalendarController implements Initializable {
     @FXML
     void handleAddAppointment(ActionEvent event) {
         System.out.println(currentUser.getUserName());
-        handleSceneChange("Appointment.fxml");
+        handleSceneChange("Appointment.fxml", false, null);
 
     }
 
     @FXML
     void handleEditAppointment(ActionEvent event) {
         // grab appointment from selected appointment
+        Appointment a1 = (Appointment) sundayTable.getSelectionModel().getSelectedItem();
+        Appointment a2 = (Appointment) mondayTable.getSelectionModel().getSelectedItem();
+        Appointment a3 = (Appointment) tuesdayTable.getSelectionModel().getSelectedItem();
+        Appointment a4 = (Appointment) wednesdayTable.getSelectionModel().getSelectedItem();
+        Appointment a5 = (Appointment) thursdayTable.getSelectionModel().getSelectedItem();
+        Appointment a6 = (Appointment) fridayTable.getSelectionModel().getSelectedItem();
+        Appointment a7 = (Appointment) saturdayTable.getSelectionModel().getSelectedItem();
 
-        // query data from database
-        // pass data to Customer View
-        // change to Appointment View Scene
-        handleSceneChange("Appointment.fxml");
+        if (a1 != null){
+            handleSceneChange("Appointment.fxml", true, a1);
+        } else if (a2 != null){
+            handleSceneChange("Appointment.fxml", true, a2);
+        } else if (a3 != null){
+            handleSceneChange("Appointment.fxml", true, a3);
+        } else if (a4 != null){
+            handleSceneChange("Appointment.fxml", true, a4);
+        } else if (a5 != null){
+            handleSceneChange("Appointment.fxml", true, a5);
+        } else if (a6 != null){
+            handleSceneChange("Appointment.fxml", true, a6);
+        } else if (a7 != null){
+            handleSceneChange("Appointment.fxml", true, a7);
+        } else {
+            errorMessage.setText("No appointment selected: Please select an appointment");
+        }
     }
 
     @FXML
@@ -145,7 +165,7 @@ public class CalendarController implements Initializable {
             deleteSelected(a7);
             saturdayList.remove(a7);
         } else {
-            errorMessage.setText("No appointment selected: Please select and appointment");
+            errorMessage.setText("No appointment selected: Please select an appointment");
         }
     }
 
@@ -285,7 +305,7 @@ public class CalendarController implements Initializable {
 
     @FXML
     void handleCustomerSceneChange(ActionEvent event) {
-        handleSceneChange("CustomerView.fxml");
+        handleSceneChange("CustomerView.fxml", false, null);
     }
 
 
@@ -296,7 +316,7 @@ public class CalendarController implements Initializable {
     }
 
     @FXML
-    private void handleSceneChange(String destination) {
+    private void handleSceneChange(String destination, Boolean edit, Appointment appointment) {
         Parent main = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(destination));
@@ -311,7 +331,9 @@ public class CalendarController implements Initializable {
                 cusViewControllerLoad(loader);
             } else if (destination == "Customer.fxml"){
                 cusControllerLoad(loader);
-            } else if (destination == "Appointment.fxml"){
+            } else if (destination == "Appointment.fxml" && edit){
+                appAddControllerLoad(loader, appointment);
+            } else if (destination == "Appointment.fxml" && !(edit)){
                 appControllerLoad(loader);
             } else if (destination == "Calendar.fxml") {
                 calControllerLoad(loader);
@@ -344,6 +366,12 @@ public class CalendarController implements Initializable {
     private void appControllerLoad(FXMLLoader loader){
         AppointmentController controller = loader.getController();
         controller.initUser(currentUser);
+    }
+
+    private void appAddControllerLoad(FXMLLoader loader, Appointment a){
+        AppointmentController controller = loader.getController();
+        controller.initUser(currentUser);
+        controller.loadAppointment(a);
     }
 
     private void calControllerLoad(FXMLLoader loader){

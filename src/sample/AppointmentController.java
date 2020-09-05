@@ -33,6 +33,9 @@ public class AppointmentController implements Initializable {
         currentUser = user;
     }
 
+    // Editing or not
+    private Boolean edit = false;
+
     // LINKED NODES
     @FXML
     private DatePicker datePicker;
@@ -165,11 +168,6 @@ public class AppointmentController implements Initializable {
 
 //        // change scene to Calendar
 //        handleSceneChange("Calendar.fxml");
-    }
-
-    @FXML
-    void handleDeleteAppointment(ActionEvent event){
-
     }
 
     @FXML
@@ -318,6 +316,31 @@ public class AppointmentController implements Initializable {
 
         // Add the sorted items to table
         customerList.setItems(sortedCustomers);
+
+    }
+
+    void loadAppointment(Appointment a){
+        // Set Values
+        datePicker.setValue(a.getDate());
+        timeStartHour.setValue(a.getHour());
+        timeStartMinute.setValue(a.getMinute());
+        timeStartAMPM.setValue(a.getAMPM());
+        duration.setText(String.valueOf(a.getDuration()));
+        location.setText(a.getLocation());
+        title.setText(a.getTitle());
+        appointmentType.setText(a.getType());
+        appointmentID.setText(String.valueOf(a.getAppointmentId()));
+        contact.setText(a.getContact());
+        description.setText(a.getDescription());
+
+        // loop through customer table and select if customer ID matches
+        for (Customer c : observableCustView) {
+            if (c.getCustomerId() == a.getCustomerID()){
+                customerList.getSelectionModel().select(c);
+            }
+        }
+
+        edit = true;
 
     }
 

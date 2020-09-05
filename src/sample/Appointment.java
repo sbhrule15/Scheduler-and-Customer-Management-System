@@ -86,8 +86,8 @@ public class Appointment {
         }
     }
 
-    public Integer getMinute(){
-        return start.getMinute();
+    public String getMinute(){
+        return String.format("%02d", start.getMinute());
     }
 
     public String getAMPM(){
