@@ -20,8 +20,8 @@
       <Label layoutX="241.0" layoutY="40.0" text=" Time Start" />
       <TextField fx:id="appointmentType" layoutX="61.0" layoutY="232.0" prefHeight="27.0" prefWidth="251.0" />
       <Label layoutX="62.0" layoutY="213.0" text="Appointment Type" />
-      <Button fx:id="createAppointment" layoutX="661.0" layoutY="459.0" mnemonicParsing="false" onAction="#handleCreateAppointment" text="Create Appointment" />
-      <Button fx:id="cancelChange" layoutX="589.0" layoutY="459.0" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
+      <Button fx:id="submitButton" layoutX="746.0" layoutY="459.0" mnemonicParsing="false" onAction="#handleSubmit" text="Submit" />
+      <Button fx:id="cancelChange" layoutX="677.0" layoutY="459.0" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
       <TextField fx:id="location" layoutX="208.0" layoutY="123.0" prefHeight="27.0" prefWidth="221.0" />
       <TextField fx:id="contact" layoutX="61.0" layoutY="283.0" prefHeight="27.0" prefWidth="368.0" />
       <Label layoutX="208.0" layoutY="100.0" text="Location" />

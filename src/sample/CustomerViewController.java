@@ -232,7 +232,6 @@ public class CustomerViewController implements Initializable {
 
                     // add to list of customers
                     custViewList.add(c);
-
                 }
             }
 

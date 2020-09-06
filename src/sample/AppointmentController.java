@@ -68,7 +68,7 @@ public class AppointmentController implements Initializable {
     @FXML
     private Button cancelChange;
     @FXML
-    private Button createAppointment;
+    private Button submitButton;
 
     // Lists for Customer Select
     private List<Customer> custViewList = new ArrayList<Customer>();
@@ -83,7 +83,7 @@ public class AppointmentController implements Initializable {
     // METHODS
 
     @FXML
-    void handleCreateAppointment(ActionEvent event){
+    void handleSubmit(ActionEvent event){
         // grab data from nodes
 
         // Get selected LocalDate from Date Picker
@@ -136,34 +136,65 @@ public class AppointmentController implements Initializable {
         // grab current date time for created date
         LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
 
-        // connect to database
-        try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+        if (edit){
 
-            // Construct prepared statement
-            PreparedStatement appAdd = connection.prepareStatement("INSERT INTO appointment (customerId, userId, title, description, location, contact, type, start, end, createDate, createdBy, lastUpdateBy, url) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            appAdd.setInt(1, cid);
-            appAdd.setInt(2, userid);
-            appAdd.setString(3, appTitle);
-            appAdd.setString(4, appDescription);
-            appAdd.setString(5, appLoc);
-            appAdd.setString(6, appContact);
-            appAdd.setString(7, appType);
-            appAdd.setObject(8, startldt);
-            appAdd.setObject(9, endldt);
-            appAdd.setObject(10, now);
-            appAdd.setString(11, currentUser.getUserName());
-            appAdd.setString(12, currentUser.getUserName());
-            appAdd.setString(13, "not needed");
+            try {
+                Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
 
-            // execute and close prepared statement
-            appAdd.execute();
-            appAdd.close();
-            connection.close();
+                // Construct prepared statement
+                PreparedStatement appEdit = connection.prepareStatement("UPDATE appointment SET customerId = ?, userId = ?, title = ?, description = ?, location = ?, contact = ?, type = ?, start = ?, end = ?, lastUpdateBy = ?, url = ?");
+                appEdit.setInt(1, cid);
+                appEdit.setInt(2, userid);
+                appEdit.setString(3, appTitle);
+                appEdit.setString(4, appDescription);
+                appEdit.setString(5, appLoc);
+                appEdit.setString(6, appContact);
+                appEdit.setString(7, appType);
+                appEdit.setObject(8, startldt);
+                appEdit.setObject(9, endldt);
+                appEdit.setString(10, currentUser.getUserName());
+                appEdit.setString(11, "not needed");
 
-        } catch (SQLException e) {
-            System.out.println("There was an error connecting to the database: " + e.getMessage());
+                // execute and close prepared statement
+                appEdit.execute();
+                appEdit.close();
+                connection.close();
+
+            } catch (SQLException e) {
+                System.out.println("There was an error connecting to the database: " + e.getMessage());
+            }
+        } else {
+            // connect to database
+
+            try {
+                Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+
+                // Construct prepared statement
+                PreparedStatement appAdd = connection.prepareStatement("INSERT INTO appointment (customerId, userId, title, description, location, contact, type, start, end, createDate, createdBy, lastUpdateBy, url) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                appAdd.setInt(1, cid);
+                appAdd.setInt(2, userid);
+                appAdd.setString(3, appTitle);
+                appAdd.setString(4, appDescription);
+                appAdd.setString(5, appLoc);
+                appAdd.setString(6, appContact);
+                appAdd.setString(7, appType);
+                appAdd.setObject(8, startldt);
+                appAdd.setObject(9, endldt);
+                appAdd.setObject(10, now);
+                appAdd.setString(11, currentUser.getUserName());
+                appAdd.setString(12, currentUser.getUserName());
+                appAdd.setString(13, "not needed");
+
+                // execute and close prepared statement
+                appAdd.execute();
+                appAdd.close();
+                connection.close();
+
+            } catch (SQLException e) {
+                System.out.println("There was an error connecting to the database: " + e.getMessage());
+            }
         }
+
 
 
 //        // change scene to Calendar

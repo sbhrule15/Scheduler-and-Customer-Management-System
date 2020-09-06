@@ -15,9 +15,16 @@ import javax.security.auth.login.FailedLoginException;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class Login implements Initializable {
+
+    // Get user Locale
+
+    Locale locale = Locale.getDefault();
+    ResourceBundle bundle = ResourceBundle.getBundle("myBundle");
+
 
     @FXML
     private Button submitLogin;
@@ -29,6 +36,12 @@ public class Login implements Initializable {
     private TextField password;
     @FXML
     private Label errorMessage;
+    @FXML
+    private Label login;
+    @FXML
+    private Label usernameLabel;
+    @FXML
+    private Label passwordLabel;
 
 
     @FXML
@@ -49,8 +62,8 @@ public class Login implements Initializable {
             ResultSet rs = loginstmt.executeQuery();
 
             // Check for valid login
-            if (rs == null){
-                errorMessage.setText("Invalid Credentials. Please try again.");
+            if (!(rs.next())){
+                errorMessage.setText(bundle.getString("invalidCredentials"));
             } else {
                 // grab data and load into new User object. This will be passed between scenes
                 while (rs.next()) {
@@ -65,7 +78,7 @@ public class Login implements Initializable {
             }
 
         } catch (SQLException e){
-            System.out.println("There was an error connecting to the database: " + e.getMessage());
+            System.out.println(bundle.getString("databaseError") + e.getMessage());
         }
     }
 
@@ -102,6 +115,12 @@ public class Login implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        login.setText(bundle.getString("login"));
+        usernameLabel.setText(bundle.getString("username"));
+        passwordLabel.setText(bundle.getString("password"));
+        submitLogin.setText(bundle.getString("submit"));
+        exitLogin.setText(bundle.getString("exit"));
+
     }
 
 
