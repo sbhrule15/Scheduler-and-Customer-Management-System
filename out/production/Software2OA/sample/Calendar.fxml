@@ -3,25 +3,25 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="699.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CalendarController">
+<AnchorPane prefHeight="699.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CalendarController">
    <children>
-      <TableView fx:id="sundayTable" layoutX="70.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+      <TableView fx:id="sundayTable" layoutX="70.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0" visible="false">
         <columns>
           <TableColumn fx:id="sundayColumn" prefWidth="130" text="Sunday" />
         </columns>
       </TableView>
-       <TableView fx:id="mondayTable" layoutX="200.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+       <TableView fx:id="mondayTable" layoutX="200.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0" visible="false">
            <columns>
                <TableColumn fx:id="mondayColumn" prefWidth="130" text="Monday" />
            </columns>
        </TableView>
       <DatePicker fx:id="datePicker" layoutX="799.0" layoutY="59.0" onAction="#getWeekDates" prefHeight="27.0" prefWidth="181.0" />
       <Button fx:id="exitChange" layoutX="939.0" layoutY="622.0" mnemonicParsing="false" onAction="#handleExit" text="Exit" />
-      <RadioButton fx:id="weekView" layoutX="70.0" layoutY="63.0" mnemonicParsing="false" selected="true" text="Week">
+      <RadioButton fx:id="weekView" layoutX="70.0" layoutY="63.0" mnemonicParsing="false" onAction="#handleWeekView" text="Week">
          <toggleGroup>
             <ToggleGroup fx:id="calendarView" />
          </toggleGroup></RadioButton>
-      <RadioButton fx:id="monthView" layoutX="150.0" layoutY="63.0" mnemonicParsing="false" text="Month" toggleGroup="$calendarView" />
+      <RadioButton fx:id="monthView" layoutX="150.0" layoutY="63.0" mnemonicParsing="false" onAction="#handleMonthView" text="Month" toggleGroup="$calendarView" />
       <MenuBar prefHeight="29.0" prefWidth="1050.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
@@ -46,31 +46,241 @@
       <Button fx:id="addAppointment" layoutX="298.0" layoutY="59.0" mnemonicParsing="false" onAction="#handleAddAppointment" text="Add Appointment" />
       <Button fx:id="editAppointment" layoutX="444.0" layoutY="59.0" mnemonicParsing="false" onAction="#handleEditAppointment" text="Edit Appointment" />
       <Button fx:id="deleteAppointment" layoutX="591.0" layoutY="59.0" mnemonicParsing="false" onAction="#handleDeleteAppointment" text="Delete Appointment" />
-      <TableView fx:id="tuesdayTable" layoutX="330.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+      <TableView fx:id="tuesdayTable" layoutX="330.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0" visible="false">
          <columns>
             <TableColumn fx:id="tuesdayColumn" prefWidth="130" text="Tuesday" />
          </columns>
       </TableView>
-      <TableView fx:id="wednesdayTable" layoutX="460.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+      <TableView fx:id="wednesdayTable" layoutX="460.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0" visible="false">
          <columns>
             <TableColumn fx:id="wednesdayColumn" prefWidth="130" text="Wednesday" />
          </columns>
       </TableView>
-      <TableView fx:id="thursdayTable" layoutX="590.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+      <TableView fx:id="thursdayTable" layoutX="590.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0" visible="false">
          <columns>
             <TableColumn fx:id="thursdayColumn" prefWidth="130" text="Thursday" />
          </columns>
       </TableView>
-      <TableView fx:id="fridayTable" layoutX="720.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+      <TableView fx:id="fridayTable" layoutX="720.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0" visible="false">
          <columns>
             <TableColumn fx:id="fridayColumn" prefWidth="130" text="Friday" />
          </columns>
       </TableView>
-      <TableView fx:id="saturdayTable" layoutX="850.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0">
+      <TableView fx:id="saturdayTable" layoutX="850.0" layoutY="100.0" prefHeight="500.0" prefWidth="130.0" visible="false">
          <columns>
             <TableColumn fx:id="saturdayColumn" prefWidth="130" text="Saturday" />
          </columns>
       </TableView>
       <Label fx:id="errorMessage" layoutX="313.0" layoutY="627.0" />
+      <TableView fx:id="day1" layoutX="70.0" layoutY="110.0" prefHeight="80.0" prefWidth="130.0">
+        <columns>
+          <TableColumn fx:id="day1col" prefWidth="128.0" />
+        </columns>
+      </TableView>
+      <TableView fx:id="day8" layoutX="70.0" layoutY="190.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day8col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day15" layoutX="70.0" layoutY="270.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day15col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day22" layoutX="70.0" layoutY="350.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day22col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day29" layoutX="70.0" layoutY="430.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day29col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day36" layoutX="70.0" layoutY="510.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day36col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day2" layoutX="200.0" layoutY="110.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day2col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day9" layoutX="200.0" layoutY="190.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day9col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day16" layoutX="200.0" layoutY="270.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day16col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day23" layoutX="200.0" layoutY="350.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day23col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day30" layoutX="200.0" layoutY="430.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day30col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day37" layoutX="200.0" layoutY="510.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day37col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day3" layoutX="330.0" layoutY="110.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day3col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day10" layoutX="330.0" layoutY="190.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day10col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day17" layoutX="330.0" layoutY="270.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day17col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day24" layoutX="330.0" layoutY="350.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day24col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day31" layoutX="330.0" layoutY="430.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day31col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day38" layoutX="330.0" layoutY="510.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day38col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day4" layoutX="460.0" layoutY="110.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day4col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day11" layoutX="460.0" layoutY="190.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day11col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day18" layoutX="460.0" layoutY="270.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day18col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day25" layoutX="460.0" layoutY="350.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day25col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day32" layoutX="460.0" layoutY="430.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day32col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day39" layoutX="460.0" layoutY="510.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day39col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day5" layoutX="590.0" layoutY="110.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day5col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day12" layoutX="590.0" layoutY="190.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day12col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day19" layoutX="590.0" layoutY="270.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day19col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day26" layoutX="590.0" layoutY="350.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day26col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day33" layoutX="590.0" layoutY="430.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day33col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day40" layoutX="590.0" layoutY="510.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day40col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day6" layoutX="720.0" layoutY="110.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day6col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day13" layoutX="720.0" layoutY="190.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day13col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day20" layoutX="720.0" layoutY="270.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day20col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day27" layoutX="720.0" layoutY="350.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day27col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day34" layoutX="720.0" layoutY="430.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day34col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day41" layoutX="720.0" layoutY="510.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day41col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day7" layoutX="850.0" layoutY="110.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day7col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day14" layoutX="850.0" layoutY="190.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day14col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day21" layoutX="850.0" layoutY="270.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day21col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day28" layoutX="850.0" layoutY="350.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day28col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day35" layoutX="850.0" layoutY="430.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day35col" prefWidth="128.0" />
+         </columns>
+      </TableView>
+      <TableView fx:id="day42" layoutX="850.0" layoutY="510.0" prefHeight="80.0" prefWidth="130.0">
+         <columns>
+            <TableColumn fx:id="day42col" prefWidth="128.0" />
+         </columns>
+      </TableView>
    </children>
 </AnchorPane>

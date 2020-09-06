@@ -36,5 +36,6 @@
       <Label layoutX="337.0" layoutY="213.0" text="ID" />
       <TextArea fx:id="description" layoutX="62.0" layoutY="340.0" prefHeight="90.0" prefWidth="368.0" />
       <Label layoutX="62.0" layoutY="323.0" text="Description" />
+      <Label fx:id="errorMessage" layoutX="67.0" layoutY="464.0" />
    </children>
 </AnchorPane>

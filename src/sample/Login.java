@@ -12,9 +12,10 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import javax.security.auth.login.FailedLoginException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.sql.*;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -61,6 +62,17 @@ public class Login implements Initializable {
             // Query and get results
             ResultSet rs = loginstmt.executeQuery();
 
+            // create login txt record if doesn't exist
+            File loginRecord = new File("loginRecord.txt");
+            if (loginRecord.createNewFile()){
+                System.out.println("new file made");
+            } else {
+                System.out.println("File already exists");
+            }
+
+            // initiate filewriter for adding record
+            FileWriter loginWrite = new FileWriter("loginRecord.txt", true);
+
             // grab data and load into new User object. This will be passed between scenes
             while (rs.next()) {
                 String usernameReturned = rs.getString("userName");
@@ -68,15 +80,28 @@ public class Login implements Initializable {
 
                 User user = new User(userIdReturned, usernameReturned);
 
+                // write successful record to text file
+                loginWrite.write(usernameEntry + " : " + ZonedDateTime.now() + " : SUCCESS\n");
+
+                // close filewriter and buffered filewriter
+                loginWrite.close();
+
                 // Scene change with new user object
                 handleChangeScene(user);
             }
 
             if (!(rs.next())){
+                // display error message
                 errorMessage.setText(bundle.getString("invalidCredentials"));
+
+                // write unsuccessful attempt
+                loginWrite.write(usernameEntry + " : " + ZonedDateTime.now() + " : FAILED\n");
+
+                // close filewriters
+                loginWrite.close();
             }
-            
-        } catch (SQLException e){
+
+        } catch (SQLException | IOException e){
             System.out.println(bundle.getString("databaseError") + e.getMessage());
         }
     }

@@ -66,6 +66,8 @@ public class AppointmentController implements Initializable {
     @FXML
     private TableColumn<Customer, String> name;
     @FXML
+    private Label errorMessage;
+    @FXML
     private Button cancelChange;
     @FXML
     private Button submitButton;
@@ -81,124 +83,162 @@ public class AppointmentController implements Initializable {
 
 
     // METHODS
+    @FXML
+    void changeView(ActionEvent event) {
+
+    }
 
     @FXML
     void handleSubmit(ActionEvent event){
-        // grab data from nodes
+        try {
+            // declare all values
+            LocalDate dateSelect;
+            Integer year;
+            Integer month;
+            Integer date;
+            Integer hour;
+            Integer minute;
+            String AMPM;
+            Integer correctHour;
+            String appTitle;
+            String appLoc;
+            String appType;
+            String appContact;
+            String appDescription;
+            Customer c;
+            Integer cid;
 
-        // Get selected LocalDate from Date Picker
-        LocalDate dateSelect = datePicker.getValue();
+            // check if any fields are null or empty: throw exception if so
 
-        // Grab values
-        Integer year = dateSelect.getYear();
-        Integer month = dateSelect.getMonthValue();
-        Integer date = dateSelect.getDayOfMonth();
-        Integer hour = (Integer) timeStartHour.getValue();
-        Integer minute = Integer.parseInt((String) timeStartMinute.getValue());
-        String AMPM = (String) timeStartAMPM.getValue();
-        Integer correctHour = 0;
-
-        // calculate 24 hour time value
-        if (hour == 12 && AMPM == "AM"){
-            correctHour = 0;
-        } else if (hour != 12 && AMPM == "PM"){
-            correctHour = hour + 12;
-        } else {
-            correctHour = hour;
-        }
-
-        // calculate ending time from duration
-        Integer dur = Integer.valueOf(duration.getText());
-
-        Integer endminute = (minute + dur) % 60;
-        Integer endhour = correctHour + ((minute+dur) / 60);
-
-        // Construct ZonedDateTime object
-        ZonedDateTime startdt = ZonedDateTime.of(year, month, date, correctHour, minute, 0, 0, ZoneId.systemDefault());
-        ZonedDateTime enddt = ZonedDateTime.of(year, month, date, endhour, endminute, 0, 0, ZoneId.systemDefault());
-
-        // Convert to UTC for query
-        LocalDateTime startldt = LocalDateTime.ofInstant(startdt.toInstant(), ZoneOffset.UTC);
-        LocalDateTime endldt = LocalDateTime.ofInstant(enddt.toInstant(), ZoneOffset.UTC);
-
-        // grab customer id
-        Customer c = customerList.getSelectionModel().getSelectedItem();
-        Integer cid = c.getCustomerId();
-
-        // grab remaining values from fields
-        Integer userid = currentUser.getUserID();
-        String appTitle = title.getText();
-        String appLoc = location.getText();
-        String appType = appointmentType.getText();
-        String appContact = contact.getText();
-        String appDescription = description.getText();
-
-        // grab current date time for created date
-        LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
-
-        if (edit){
-
-            try {
-                Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
-
-                // Construct prepared statement
-                PreparedStatement appEdit = connection.prepareStatement("UPDATE appointment SET customerId = ?, userId = ?, title = ?, description = ?, location = ?, contact = ?, type = ?, start = ?, end = ?, lastUpdateBy = ?, url = ?");
-                appEdit.setInt(1, cid);
-                appEdit.setInt(2, userid);
-                appEdit.setString(3, appTitle);
-                appEdit.setString(4, appDescription);
-                appEdit.setString(5, appLoc);
-                appEdit.setString(6, appContact);
-                appEdit.setString(7, appType);
-                appEdit.setObject(8, startldt);
-                appEdit.setObject(9, endldt);
-                appEdit.setString(10, currentUser.getUserName());
-                appEdit.setString(11, "not needed");
-
-                // execute and close prepared statement
-                appEdit.execute();
-                appEdit.close();
-                connection.close();
-
-            } catch (SQLException e) {
-                System.out.println("There was an error connecting to the database: " + e.getMessage());
+            if (datePicker.getValue() == null){
+                throw new IllegalArgumentException("Please pick a date");
+            } else if (timeStartHour.getSelectionModel().isEmpty()){
+                throw new IllegalArgumentException("Please pick a starting hour");
+            } else if (timeStartMinute.getSelectionModel().isEmpty()) {
+                throw new IllegalArgumentException("Please pick a starting minute");
+            } else if (timeStartAMPM.getSelectionModel().isEmpty()){
+                throw new IllegalArgumentException("Please pick starting in the AM or PM");
+            } else if (duration.getText().isEmpty()) {
+                throw new IllegalArgumentException("Please enter an appointment duration");
+            } else if (location.getText().isEmpty()) {
+                throw new IllegalArgumentException("Please enter an appointment location");
+            } else if (title.getText().isEmpty()) {
+                throw new IllegalArgumentException("Please enter an appointment title");
+            } else if (appointmentType.getText().isEmpty()) {
+                throw new IllegalArgumentException("Please enter an appointment type");
+            } else if (contact.getText().isEmpty()){
+                throw new IllegalArgumentException("Please enter an appointment contact");
+            } else if (description.getText().isEmpty()){
+                throw new IllegalArgumentException("Please enter an appointment description");
+            } else if (customerList.getSelectionModel().isEmpty()){
+                throw new IllegalArgumentException("Please select a customer");
+            } else {
+                dateSelect = datePicker.getValue();
+                year = dateSelect.getYear();
+                month = dateSelect.getMonthValue();
+                date = dateSelect.getDayOfMonth();
+                hour = (Integer) timeStartHour.getValue();
+                minute = Integer.parseInt((String) timeStartMinute.getValue());
+                AMPM = (String) timeStartAMPM.getValue();
+                correctHour = 0;
+                appTitle = title.getText();
+                appLoc = location.getText();
+                appType = appointmentType.getText();
+                appContact = contact.getText();
+                appDescription = description.getText();
+                c = customerList.getSelectionModel().getSelectedItem();
+                cid = c.getCustomerId();
             }
-        } else {
-            // connect to database
 
-            try {
-                Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
-
-                // Construct prepared statement
-                PreparedStatement appAdd = connection.prepareStatement("INSERT INTO appointment (customerId, userId, title, description, location, contact, type, start, end, createDate, createdBy, lastUpdateBy, url) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                appAdd.setInt(1, cid);
-                appAdd.setInt(2, userid);
-                appAdd.setString(3, appTitle);
-                appAdd.setString(4, appDescription);
-                appAdd.setString(5, appLoc);
-                appAdd.setString(6, appContact);
-                appAdd.setString(7, appType);
-                appAdd.setObject(8, startldt);
-                appAdd.setObject(9, endldt);
-                appAdd.setObject(10, now);
-                appAdd.setString(11, currentUser.getUserName());
-                appAdd.setString(12, currentUser.getUserName());
-                appAdd.setString(13, "not needed");
-
-                // execute and close prepared statement
-                appAdd.execute();
-                appAdd.close();
-                connection.close();
-
-            } catch (SQLException e) {
-                System.out.println("There was an error connecting to the database: " + e.getMessage());
+            // calculate 24 hour time value
+            if (hour == 12 && AMPM == "AM"){
+                correctHour = 0;
+            } else if (hour != 12 && AMPM == "PM"){
+                correctHour = hour + 12;
+            } else {
+                correctHour = hour;
             }
+
+            // calculate ending time from duration
+            Integer dur = Integer.valueOf(duration.getText());
+
+            Integer endminute = (minute + dur) % 60;
+            Integer endhour = correctHour + ((minute+dur) / 60);
+
+            // Construct ZonedDateTime object
+            ZonedDateTime startdt = ZonedDateTime.of(year, month, date, correctHour, minute, 0, 0, ZoneId.systemDefault());
+            ZonedDateTime enddt = ZonedDateTime.of(year, month, date, endhour, endminute, 0, 0, ZoneId.systemDefault());
+
+            // Convert to UTC for query
+            LocalDateTime startldt = LocalDateTime.ofInstant(startdt.toInstant(), ZoneOffset.UTC);
+            LocalDateTime endldt = LocalDateTime.ofInstant(enddt.toInstant(), ZoneOffset.UTC);
+
+            // Grab current users id
+            Integer userid = currentUser.getUserID();
+
+            // grab current date time for created date
+            LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
+
+            if (edit) {
+                    Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+
+                    // Construct prepared statement
+                    PreparedStatement appEdit = connection.prepareStatement("UPDATE appointment SET customerId = ?, userId = ?, title = ?, description = ?, location = ?, contact = ?, type = ?, start = ?, end = ?, lastUpdateBy = ?, url = ?");
+                    appEdit.setInt(1, cid);
+                    appEdit.setInt(2, userid);
+                    appEdit.setString(3, appTitle);
+                    appEdit.setString(4, appDescription);
+                    appEdit.setString(5, appLoc);
+                    appEdit.setString(6, appContact);
+                    appEdit.setString(7, appType);
+                    appEdit.setObject(8, startldt);
+                    appEdit.setObject(9, endldt);
+                    appEdit.setString(10, currentUser.getUserName());
+                    appEdit.setString(11, "not needed");
+
+                    // execute and close prepared statement
+                    appEdit.execute();
+                    appEdit.close();
+                    connection.close();
+
+            } else {
+                // connect to database
+                    Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+
+                    // Construct prepared statement
+                    PreparedStatement appAdd = connection.prepareStatement("INSERT INTO appointment (customerId, userId, title, description, location, contact, type, start, end, createDate, createdBy, lastUpdateBy, url) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    appAdd.setInt(1, cid);
+                    appAdd.setInt(2, userid);
+                    appAdd.setString(3, appTitle);
+                    appAdd.setString(4, appDescription);
+                    appAdd.setString(5, appLoc);
+                    appAdd.setString(6, appContact);
+                    appAdd.setString(7, appType);
+                    appAdd.setObject(8, startldt);
+                    appAdd.setObject(9, endldt);
+                    appAdd.setObject(10, now);
+                    appAdd.setString(11, currentUser.getUserName());
+                    appAdd.setString(12, currentUser.getUserName());
+                    appAdd.setString(13, "not needed");
+
+                    // execute and close prepared statement
+                    appAdd.execute();
+                    appAdd.close();
+                    connection.close();
+
+                    // change scene to Calendar
+                    handleSceneChange("Calendar.fxml");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("There was an error connecting to the database: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+            errorMessage.setText("Duration must be an integer");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e);
+            errorMessage.setText(e.getMessage());
         }
-
-
-
-//        // change scene to Calendar
-//        handleSceneChange("Calendar.fxml");
     }
 
     @FXML
@@ -370,7 +410,6 @@ public class AppointmentController implements Initializable {
                 customerList.getSelectionModel().select(c);
             }
         }
-
         edit = true;
 
     }
