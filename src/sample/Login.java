@@ -61,22 +61,21 @@ public class Login implements Initializable {
             // Query and get results
             ResultSet rs = loginstmt.executeQuery();
 
-            // Check for valid login
-            if (!(rs.next())){
-                errorMessage.setText(bundle.getString("invalidCredentials"));
-            } else {
-                // grab data and load into new User object. This will be passed between scenes
-                while (rs.next()) {
-                    String usernameReturned = rs.getString("userName");
-                    Integer userIdReturned = rs.getInt("userId");
+            // grab data and load into new User object. This will be passed between scenes
+            while (rs.next()) {
+                String usernameReturned = rs.getString("userName");
+                Integer userIdReturned = rs.getInt("userId");
 
-                    User user = new User(userIdReturned, usernameReturned);
+                User user = new User(userIdReturned, usernameReturned);
 
-                    // Scene change with new user object
-                    handleChangeScene(user);
-                }
+                // Scene change with new user object
+                handleChangeScene(user);
             }
 
+            if (!(rs.next())){
+                errorMessage.setText(bundle.getString("invalidCredentials"));
+            }
+            
         } catch (SQLException e){
             System.out.println(bundle.getString("databaseError") + e.getMessage());
         }
