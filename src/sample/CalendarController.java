@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
@@ -810,19 +811,24 @@ public class CalendarController implements Initializable {
 
                     // Date Conversions
                     LocalDateTime returnedDate = rs.getTimestamp("start").toLocalDateTime();
-                    ZonedDateTime zdt = returnedDate.atZone(ZoneId.systemDefault());
+                    ZonedDateTime zdt = returnedDate.atZone(ZoneOffset.UTC);
+                    ZonedDateTime fdt = zdt.withZoneSameInstant(ZoneId.systemDefault());
+
+                    System.out.println(fdt);
+
 
                     LocalDateTime returnedDateEnd = rs.getTimestamp("end").toLocalDateTime();
-                    ZonedDateTime zdt2 = returnedDateEnd.atZone(ZoneId.systemDefault());
+                    ZonedDateTime zdt2 = returnedDateEnd.atZone(ZoneOffset.UTC);
+                    ZonedDateTime fdt2 = zdt2.withZoneSameInstant(ZoneId.systemDefault());
 
                     // Calculate duration between start and end
-                    Duration d = Duration.between(zdt, zdt2);
+                    Duration d = Duration.between(fdt, fdt2);
 
                     // Cast to Integer value
                     Integer dminutes = Math.toIntExact(d.toMinutes());
 
                     // Construct Appointment Object
-                    Appointment a = new Appointment(appointmentid, customerid, userid, title, description, location, contact, type, zdt, dminutes);
+                    Appointment a = new Appointment(appointmentid, customerid, userid, title, description, location, contact, type, fdt, dminutes);
 
                     switch (i){
                         case 0: sundayList.add(a);
@@ -890,6 +896,11 @@ public class CalendarController implements Initializable {
         handleSceneChange("CustomerView.fxml", false, null);
     }
 
+    @FXML
+    void handleTypeByMonth(ActionEvent event){
+        handleSceneChange("Report.fxml", false, null);
+    }
+
 
     @FXML
     void handleExit(ActionEvent event) {
@@ -919,6 +930,8 @@ public class CalendarController implements Initializable {
                 appControllerLoad(loader);
             } else if (destination == "Calendar.fxml") {
                 calControllerLoad(loader);
+            } else if (destination == "Report.fxml") {
+                repControllerLoad(loader);
             }
 
             // Show scene
@@ -934,8 +947,10 @@ public class CalendarController implements Initializable {
 
         for (int i = 0; i < 42; i++){
             daytables.add(FXCollections.observableArrayList());
-
         }
+
+        // Check for appointments in 15 minutes
+        appointmentCheck();
     }
 
     // Controller User Passthrough Methods
@@ -964,6 +979,11 @@ public class CalendarController implements Initializable {
     private void calControllerLoad(FXMLLoader loader){
         CalendarController controller = loader.getController();
         controller.initUser(currentUser);
+    }
+
+    private void repControllerLoad(FXMLLoader loader){
+        ReportController controller = loader.getController();
+        controller.monthTypeReport();
     }
 
     private void deleteSelected(Appointment a){
@@ -1038,19 +1058,24 @@ public class CalendarController implements Initializable {
 
                 // Date Conversions
                 LocalDateTime returnedDate = rs.getTimestamp("start").toLocalDateTime();
-                ZonedDateTime zdt = returnedDate.atZone(ZoneId.systemDefault());
+                ZonedDateTime zdt = returnedDate.atZone(ZoneOffset.UTC);
+                ZonedDateTime fdt = zdt.withZoneSameInstant(ZoneId.systemDefault());
+
+                System.out.println(fdt);
+
 
                 LocalDateTime returnedDateEnd = rs.getTimestamp("end").toLocalDateTime();
-                ZonedDateTime zdt2 = returnedDateEnd.atZone(ZoneId.systemDefault());
+                ZonedDateTime zdt2 = returnedDateEnd.atZone(ZoneOffset.UTC);
+                ZonedDateTime fdt2 = zdt2.withZoneSameInstant(ZoneId.systemDefault());
 
                 // Calculate duration between start and end
-                Duration dur = Duration.between(zdt, zdt2);
+                Duration dur = Duration.between(fdt, fdt2);
 
                 // Cast to Integer value
                 Integer dminutes = Math.toIntExact(dur.toMinutes());
 
                 // Construct Appointment Object
-                Appointment a = new Appointment(appointmentid, customerid, userid, title, description, location, contact, type, zdt, dminutes);
+                Appointment a = new Appointment(appointmentid, customerid, userid, title, description, location, contact, type, fdt, dminutes);
 
                 Integer monthValue = a.getDate().getMonthValue();
 
@@ -1294,4 +1319,44 @@ public class CalendarController implements Initializable {
         ));
 
     }
+
+    void appointmentCheck(){
+        try {
+            // get date of now
+            LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
+            // get date of 15 minutes ahead
+            LocalDateTime after15Minutes = now.plusMinutes(15);
+
+            // connect to database and prepare statement
+            Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM appointment WHERE start BETWEEN ? AND ?");
+            statement.setObject(1, now);
+            statement.setObject(2, after15Minutes);
+
+            ResultSet rs = statement.executeQuery();
+            // execute statement in if
+            if (rs.next()){
+                errorMessage.setText("You have an appointment within 15 minutes");
+            }
+
+            statement.close();
+            connection.close();
+
+        } catch (SQLException e){
+            System.out.println("There was an error: " + e);
+        }
+    }
+
+//    void monthTypeReport(){
+//        try{
+//
+//            Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+//
+//            for (int i = 1; i<)
+//
+//
+//        } catch (SQLException e){
+//            System.out.println("There was an error: " + e);
+//        }
+//    }
 }

@@ -227,7 +227,7 @@ public class AppointmentController implements Initializable {
                     connection.close();
 
                     // change scene to Calendar
-                    handleSceneChange("Calendar.fxml");
+//                    handleSceneChange("Calendar.fxml");
             }
 
         } catch (SQLException e) {
