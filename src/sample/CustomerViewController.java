@@ -67,6 +67,8 @@ public class CustomerViewController implements Initializable {
         } else {
             handleSceneChange("Customer.fxml",true, c);
         }
+
+        //
     }
 
     @FXML
