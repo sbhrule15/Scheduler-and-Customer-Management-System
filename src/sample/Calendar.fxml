@@ -37,7 +37,8 @@
           <Menu mnemonicParsing="false" text="Reports">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleTypeByMonth" text="Type By Month" />
-                  <MenuItem mnemonicParsing="false" text="Customer" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleScheduleReport" text="Schedule" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleCustomerReport" text="Customer" />
             </items>
           </Menu>
         </menus>

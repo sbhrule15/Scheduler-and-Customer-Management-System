@@ -36,6 +36,8 @@ public class CalendarController implements Initializable {
     LocalTime currentTime = LocalTime.now();
     Instant instant = Instant.now();
 
+    Integer reportType;
+
     // LINKED NODES
     @FXML
     private Label errorMessage;
@@ -898,7 +900,21 @@ public class CalendarController implements Initializable {
 
     @FXML
     void handleTypeByMonth(ActionEvent event){
+        reportType = 1;
         handleSceneChange("Report.fxml", false, null);
+    }
+
+    @FXML
+    void handleScheduleReport(ActionEvent event){
+        reportType = 2;
+        handleSceneChange("Report.fxml", false, null);
+    }
+
+    @FXML
+    void handleCustomerReport(ActionEvent event){
+        reportType = 3;
+        handleSceneChange("Report.fxml", false, null);
+
     }
 
 
@@ -983,7 +999,15 @@ public class CalendarController implements Initializable {
 
     private void repControllerLoad(FXMLLoader loader){
         ReportController controller = loader.getController();
-        controller.monthTypeReport();
+        controller.initUser(currentUser);
+        switch (reportType){
+            case 1: controller.monthTypeReport();
+                    break;
+            case 2: controller.consultantScheduleReport();
+                    break;
+            case 3: controller.customerReport();
+                    break;
+        }
     }
 
     private void deleteSelected(Appointment a){
