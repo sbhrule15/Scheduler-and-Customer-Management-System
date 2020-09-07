@@ -98,6 +98,7 @@ public class AppointmentController implements Initializable {
             Integer date;
             Integer hour;
             Integer minute;
+            Integer appId;
             String AMPM;
             Integer correctHour;
             String appTitle;
@@ -150,10 +151,13 @@ public class AppointmentController implements Initializable {
                 cid = c.getCustomerId();
             }
 
+            // outside business hours exception control
+            if ((hour < 8 && AMPM == "AM") || (hour > 5 && AMPM == "PM" && hour != 12) || (hour == 12 && AMPM=="AM")){
+                throw new IllegalArgumentException("Please choose an appointment within business hours");
+            }
+
             // calculate 24 hour time value
-            if (hour == 12 && AMPM == "AM"){
-                correctHour = 0;
-            } else if (hour != 12 && AMPM == "PM"){
+            if (hour != 12 && AMPM == "PM"){
                 correctHour = hour + 12;
             } else {
                 correctHour = hour;
@@ -179,11 +183,30 @@ public class AppointmentController implements Initializable {
             // grab current date time for created date
             LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
 
+
+            Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+
             if (edit) {
-                    Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+                    // grab appointmentID
+                    appId = Integer.parseInt(appointmentID.getText());
+
+                    // appointment overlap exception control
+                    PreparedStatement checkAppointment = connection.prepareStatement("SELECT * FROM appointment WHERE (appointmentId IS NOT ?) AND (start BETWEEN ? AND ?) OR (? BETWEEN start AND end) OR (? BETWEEN start AND end)");
+                    checkAppointment.setInt(1, appId);
+                    checkAppointment.setObject(2, startldt);
+                    checkAppointment.setObject(3, endldt);
+                    checkAppointment.setObject(4, startdt);
+                    checkAppointment.setObject(5, endldt);
+
+                    ResultSet rs = checkAppointment.executeQuery();
+
+                    if (rs.next()){
+                        throw new IllegalArgumentException("There is an overlapping appointment.");
+                    }
+
 
                     // Construct prepared statement
-                    PreparedStatement appEdit = connection.prepareStatement("UPDATE appointment SET customerId = ?, userId = ?, title = ?, description = ?, location = ?, contact = ?, type = ?, start = ?, end = ?, lastUpdateBy = ?, url = ?");
+                    PreparedStatement appEdit = connection.prepareStatement("UPDATE appointment SET customerId = ?, userId = ?, title = ?, description = ?, location = ?, contact = ?, type = ?, start = ?, end = ?, lastUpdateBy = ?, url = ? WHERE appointmentId=?");
                     appEdit.setInt(1, cid);
                     appEdit.setInt(2, userid);
                     appEdit.setString(3, appTitle);
@@ -195,6 +218,7 @@ public class AppointmentController implements Initializable {
                     appEdit.setObject(9, endldt);
                     appEdit.setString(10, currentUser.getUserName());
                     appEdit.setString(11, "not needed");
+                    appEdit.setInt(12, appId);
 
                     // execute and close prepared statement
                     appEdit.execute();
@@ -202,8 +226,19 @@ public class AppointmentController implements Initializable {
                     connection.close();
 
             } else {
-                // connect to database
-                    Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+
+                    PreparedStatement checkAppointment = connection.prepareStatement("SELECT * FROM appointment WHERE (start BETWEEN ? AND ?) OR (? BETWEEN start AND end) OR (? BETWEEN start AND end)");
+                    checkAppointment.setObject(1, startldt);
+                    checkAppointment.setObject(2, endldt);
+                    checkAppointment.setObject(3, startdt);
+                    checkAppointment.setObject(4, endldt);
+
+                    ResultSet rs = checkAppointment.executeQuery();
+
+                    if (rs.next()){
+                        rs.beforeFirst();
+                        throw new IllegalArgumentException("There is an overlapping appointment.");
+                    }
 
                     // Construct prepared statement
                     PreparedStatement appAdd = connection.prepareStatement("INSERT INTO appointment (customerId, userId, title, description, location, contact, type, start, end, createDate, createdBy, lastUpdateBy, url) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
@@ -226,8 +261,8 @@ public class AppointmentController implements Initializable {
                     appAdd.close();
                     connection.close();
 
-                    // change scene to Calendar
-//                    handleSceneChange("Calendar.fxml");
+                     // change scene to Calendar
+                    handleSceneChange("Calendar.fxml");
             }
 
         } catch (SQLException e) {

@@ -72,43 +72,67 @@ public class CustomerController implements Initializable {
     @FXML
     void handleSubmit(ActionEvent event) {
 
+        // declare variables
+
         LocalDateTime currentdatetime = LocalDateTime.now();
+        String citychoice;
+        String custname;
+        String custemail;
+        String custadd1;
+        String custadd2;
+        String custphone;
+        Integer custpostcode;
+        Integer custcity;
+        String createdByUsername;
+        String lastUpdateBy;
 
-        String citychoice = (String) citySelect.getValue();
+        //exception control
+        try {
+            if (name.getText().isEmpty()){
+                throw new IllegalArgumentException("Please enter a name");
+            } else if (emailAddress.getText().isEmpty()){
+                throw new IllegalArgumentException("Please enter an email address");
+            } else if (phoneNumber.getText().isEmpty()) {
+                throw new IllegalArgumentException("Please enter a phone number");
+            } else if (addressLine1.getText().isEmpty()){
+                throw new IllegalArgumentException("Please enter an address");
+            } else if (citySelect.getSelectionModel().isEmpty()) {
+                throw new IllegalArgumentException("Please choose a city");
+            } else if (postalCode.getText().isEmpty()) {
+                throw new IllegalArgumentException("Please enter a postal code");
+            } else {
+                citychoice = (String) citySelect.getValue();
+                custname = name.getText();
+                custemail = emailAddress.getText();
+                custadd1 = addressLine1.getText();
+                custadd2 = addressLine2.getText();
+                custphone = phoneNumber.getText();
+                custpostcode = Integer.parseInt(postalCode.getText());
+                custcity = 0;
+                createdByUsername = currentUser.getUserName();
+                lastUpdateBy = currentUser.getUserName();
+            }
 
-        String custname = name.getText();
-        String custemail = emailAddress.getText();
-        String custadd1 = addressLine1.getText();
-        String custadd2 = addressLine2.getText();
-        String custphone = phoneNumber.getText();
-        Integer custpostcode = Integer.parseInt(postalCode.getText());
-        Integer custcity = 0;
-        String createdByUsername = currentUser.getUserName();
-        String lastUpdateBy = currentUser.getUserName();
+            if (citychoice == "New York"){
+                custcity = 1;
+            }
+            else if (citychoice == "Los Angeles"){
+                custcity = 2;
+            }
+            else if (citychoice == "Toronto"){
+                custcity = 3;
+            }
+            else if (citychoice == "Vancouver"){
+                custcity = 4;
+            }
+            else if (citychoice == "Oslo"){
+                custcity = 5;
+            }
 
+            // Initialize connection
+            Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
 
-        if (citychoice == "New York"){
-            custcity = 1;
-        }
-        else if (citychoice == "Los Angeles"){
-            custcity = 2;
-        }
-        else if (citychoice == "Toronto"){
-            custcity = 3;
-        }
-        else if (citychoice == "Vancouver"){
-            custcity = 4;
-        }
-        else if (citychoice == "Oslo"){
-            custcity = 5;
-        }
-
-        if (edit){
-
-            try {
-                // Initialize connection
-                Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
-
+            if (edit){
                 // Get customer ID
                 Integer custId = Integer.valueOf(customerID.getText());
 
@@ -138,18 +162,9 @@ public class CustomerController implements Initializable {
                 custstmt.close();
                 connection.close();
 
+                handleSceneChange("CustomerView.fxml");
 
-            } catch(SQLException e) {
-                System.out.println("There was an error: " + e.getMessage());
-            }
-
-            handleSceneChange("CustomerView.fxml");
-
-        } else {
-
-            try {
-                // Initialize connection
-                Connection connection = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/U07Vgt", "U07Vgt", "53689140721");
+            } else {
 
                 // Prepare insert or edit address statement
                 PreparedStatement addressstmt = connection.prepareStatement("INSERT INTO address (address, address2, cityId, postalCode, phone, createDate, createdBy, lastUpdateBy) VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
@@ -167,6 +182,7 @@ public class CustomerController implements Initializable {
 
                 // Get address id
                 ResultSet rs = addressstmt.getGeneratedKeys();
+
                 if(rs.next()) {
 
                     Integer addresskey = rs.getInt(1);
@@ -182,23 +198,18 @@ public class CustomerController implements Initializable {
                     custstmt.setString(5, "test");
                     custstmt.setObject(6, "test");
 
-
-                    try {
-                        custstmt.execute();
-                    } catch (SQLException e) {
-                        alertMessage.setText("There was an error: " + e);
-                    }
+                    custstmt.execute();
 
                     custstmt.close();
                     connection.close();
                 }
-
-            } catch(SQLException e) {
-                System.out.println("There was an error: " + e.getMessage());
             }
+        } catch(SQLException e) {
+            System.out.println("There was an error: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println(e);
+            alertMessage.setText(e.getMessage());
         }
-
-
     }
 
     @FXML
